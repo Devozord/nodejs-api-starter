@@ -6,6 +6,8 @@ import dotenv from 'dotenv'
 import chalk from 'chalk'
 import path from 'path'
 import config from '../config/config.json'
+import * as errorHandler from './core/errorHandler'
+
 // routes
 import account from './routes/account'
 
@@ -29,39 +31,10 @@ app.use(cookieParser())
 app.use(config.prefix + '/account', account)
 
 // catch 404 and forward to error handler
-app.use((req, res, next) => {
-  const err = new Error('Not Found')
-  err.status = 404
-  next(err)
-})
+app.use(errorHandler.notFound)
 
 // error handler
-app.use((err, req, res, next) => {
-  res.status(err.status || 500)
-  res.format({
-    text: () => {
-      res.send({
-        error: {
-          message: err.message,
-          code: err.status || 500,
-        },
-      })
-    },
-    html: () => {
-      res.locals.message = err.message
-      res.locals.error = req.app.get('env') === 'development' ? err : {}
-      res.render('error')
-    },
-    json: () => {
-      res.json({
-        error: {
-          message: err.message,
-          code: err.status || 500,
-        },
-      })
-    },
-  })
-})
+app.use(errorHandler.unexpected)
 
 app.listen(app.get('port'), () => {
   console.log('%s App is listening at http://localhost:%s in %s mode', chalk.green('✓'), app.get('port'), chalk.red(app.get('env')))
