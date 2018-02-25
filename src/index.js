@@ -6,6 +6,8 @@ import dotenv from 'dotenv'
 import chalk from 'chalk'
 import path from 'path'
 import config from '../config/config.json'
+import crossOrigin from './core/crossOrigin'
+
 // routes
 import account from './routes/account'
 
@@ -24,6 +26,7 @@ app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
+app.use(crossOrigin())
 
 // Here you can put all your routes controllers:
 app.use(config.prefix + '/account', account)
